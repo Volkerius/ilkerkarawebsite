@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="N. Demir ile iletişime geçin: konuşma daveti, röportaj ve yayın işbirlikleri." />
+    <title>N. Demir | İletişim</title>
+    <link rel="icon" type="image/svg+xml" href="assets/icons/favicon.svg" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: '#0F172A', accent: '#D4AF37', bgsoft: '#F8FAFC' },
+            fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Playfair Display', 'serif'] },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body class="bg-bgsoft">
+    <header class="fixed inset-x-0 top-3 z-50">
+      <div class="site-container">
+        <nav data-navbar class="glass-nav rounded-2xl px-4 py-3 md:px-6" aria-label="Ana gezinme">
+          <div class="flex items-center justify-between">
+            <a href="index.html" class="text-primary font-semibold tracking-wide text-lg">N. DEMİR</a>
+            <button data-menu-toggle class="md:hidden rounded-lg border border-slate-300 p-2" aria-expanded="false" aria-label="Menüyü aç">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 6H21M3 12H21M3 18H21" stroke="#0F172A" stroke-width="1.8" stroke-linecap="round"/></svg>
+            </button>
+            <ul class="hidden md:flex items-center gap-7 text-sm font-medium">
+              <li><a class="nav-link" href="index.html">Ana Sayfa</a></li>
+              <li><a class="nav-link" href="about.html">Hakkında</a></li>
+              <li><a class="nav-link" href="works.html">Eserler</a></li>
+              <li><a class="nav-link text-accent" href="contact.html">İletişim</a></li>
+            </ul>
+          </div>
+          <ul data-mobile-menu class="hidden md:hidden mt-4 space-y-3 pb-2 text-sm font-medium">
+            <li><a class="nav-link" href="index.html">Ana Sayfa</a></li>
+            <li><a class="nav-link" href="about.html">Hakkında</a></li>
+            <li><a class="nav-link" href="works.html">Eserler</a></li>
+            <li><a class="nav-link text-accent" href="contact.html">İletişim</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <main class="pt-32 pb-24">
+      <section class="site-container mb-12">
+        <p data-hero="eyebrow" class="text-sm uppercase tracking-[0.22em] text-slate-500 mb-4">İletişim</p>
+        <h1 data-hero="title" class="hero-title">Yeni projeler ve konuşma davetleri için ulaşın.</h1>
+        <p data-hero="subtitle" class="hero-subtitle mt-6 max-w-2xl">Röportaj, seminer, panel ve editoryal işbirlikleri için formu doldurabilirsiniz.</p>
+      </section>
+
+      <section class="site-container">
+        <div class="grid lg:grid-cols-5 gap-8 items-start">
+          <div class="lg:col-span-3 section-shell p-6 md:p-9" data-reveal="left">
+            <h2 class="text-3xl mb-6">Mesaj Gönderin</h2>
+            <form class="space-y-5" action="#" method="post" novalidate>
+              <div>
+                <label for="name" class="block text-sm font-medium mb-2">Ad Soyad</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-3.5" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 12C14.2 12 16 10.2 16 8C16 5.8 14.2 4 12 4C9.8 4 8 5.8 8 8C8 10.2 9.8 12 12 12Z" stroke="#64748B" stroke-width="1.5"/><path d="M5 20C5.8 16.9 8.6 15 12 15C15.4 15 18.2 16.9 19 20" stroke="#64748B" stroke-width="1.5" stroke-linecap="round"/></svg>
+                  </span>
+                  <input id="name" name="name" class="input-field pl-10" type="text" placeholder="Adınızı girin" required />
+                </div>
+              </div>
+              <div>
+                <label for="email" class="block text-sm font-medium mb-2">E-posta</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-3.5" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M4 7L12 13L20 7" stroke="#64748B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><rect x="4" y="5" width="16" height="14" rx="2" stroke="#64748B" stroke-width="1.5"/></svg>
+                  </span>
+                  <input id="email" name="email" class="input-field pl-10" type="email" placeholder="ornek@mail.com" required />
+                </div>
+              </div>
+              <div>
+                <label for="message" class="block text-sm font-medium mb-2">Mesaj</label>
+                <div class="relative">
+                  <span class="absolute left-3 top-3.5" aria-hidden="true">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M5 5H19V15H7L5 17V5Z" stroke="#64748B" stroke-width="1.5" stroke-linejoin="round"/></svg>
+                  </span>
+                  <textarea id="message" name="message" class="input-field pl-10 min-h-[140px]" placeholder="Mesajınızı yazın" required></textarea>
+                </div>
+              </div>
+              <button type="submit" class="btn-premium btn-primary">Mesajı Gönder</button>
+            </form>
+          </div>
+
+          <aside class="lg:col-span-2 space-y-6" data-reveal="right">
+            <div class="section-shell p-6">
+              <h2 class="text-2xl mb-4">İletişim Kanalları</h2>
+              <p class="text-slate-600 mb-4">Sosyal mecralardan da ulaşabilir, güncel etkinlikleri takip edebilirsiniz.</p>
+              <div class="space-y-3">
+                <a href="#" class="inline-link relative block text-primary font-medium">Instagram</a>
+                <a href="#" class="inline-link relative block text-primary font-medium">Facebook</a>
+                <a href="#" class="inline-link relative block text-primary font-medium">LinkedIn</a>
+              </div>
+            </div>
+            <div class="section-shell p-6">
+              <h3 class="text-xl mb-3">Yanıt Süresi</h3>
+              <p class="text-slate-600">Mesajlar genellikle 48 saat içinde değerlendirilir.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-shell py-10">
+      <div class="site-container flex flex-wrap items-center justify-between gap-4">
+        <p class="text-sm text-slate-600">N. Demir © 2026. Tüm hakları saklıdır.</p>
+        <div class="flex items-center gap-3">
+          <a class="social-icon" href="#" aria-label="Instagram">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" stroke="#0F172A" stroke-width="1.5"/><circle cx="12" cy="12" r="4" stroke="#0F172A" stroke-width="1.5"/><circle cx="17.5" cy="6.5" r="1" fill="#0F172A"/></svg>
+          </a>
+          <a class="social-icon" href="#" aria-label="Facebook">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M14 8H16V5H14C11.8 5 10 6.8 10 9V11H8V14H10V19H13V14H16L17 11H13V9C13 8.4 13.4 8 14 8Z" fill="#0F172A"/></svg>
+          </a>
+          <a class="social-icon" href="#" aria-label="LinkedIn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3" stroke="#0F172A" stroke-width="1.5"/><path d="M8 10V16M8 8.3V8.35M12 16V12.7C12 11.6 12.9 10.7 14 10.7C15.1 10.7 16 11.6 16 12.7V16" stroke="#0F172A" stroke-width="1.5" stroke-linecap="round"/></svg>
+          </a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+    <script src="js/script.js" defer></script>
+  </body>
+</html>
