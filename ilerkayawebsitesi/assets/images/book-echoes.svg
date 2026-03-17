@@ -1,0 +1,8 @@
+<svg width="640" height="860" viewBox="0 0 640 860" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="640" height="860" rx="24" fill="#111827"/>
+  <rect x="24" y="24" width="592" height="812" rx="18" fill="#0F172A"/>
+  <path d="M110 192H530" stroke="#D4AF37" stroke-width="2"/>
+  <text x="320" y="305" text-anchor="middle" fill="#F8FAFC" font-size="56" font-family="Georgia, serif">Sözlerin</text>
+  <text x="320" y="380" text-anchor="middle" fill="#F8FAFC" font-size="56" font-family="Georgia, serif">Sessizliği</text>
+  <text x="320" y="700" text-anchor="middle" fill="#D4AF37" font-size="28" font-family="Arial">Deneme</text>
+</svg>
