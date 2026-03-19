@@ -3,6 +3,13 @@
   const menuToggle = document.querySelector('[data-menu-toggle]');
   const mobileMenu = document.querySelector('[data-mobile-menu]');
 
+  const showAnimationTargets = () => {
+    document.querySelectorAll('[data-reveal], [data-stagger-item], [data-hero="eyebrow"], [data-hero="title"], [data-hero="subtitle"], [data-hero="cta"], [data-hero="visual"], [data-hero="scroll"]').forEach((el) => {
+      el.style.visibility = 'visible';
+      el.style.opacity = '1';
+    });
+  };
+
   const onScroll = () => {
     if (!navbar) return;
     navbar.classList.toggle('scrolled', window.scrollY > 20);
@@ -33,24 +40,22 @@
     });
   });
 
-  const socialTextLinks = document.querySelectorAll('.inline-link');
-  socialTextLinks.forEach((link) => {
-    if (!link.classList.contains('relative')) link.classList.add('relative');
-  });
-
   const hasGsap = window.gsap && window.ScrollTrigger;
-  if (!hasGsap) return;
+  if (!hasGsap) {
+    showAnimationTargets();
+    return;
+  }
 
   gsap.registerPlugin(ScrollTrigger);
 
   const heroTimeline = gsap.timeline({ defaults: { ease: 'power3.out' } });
   heroTimeline
-    .from('[data-hero="eyebrow"]', { y: 22, opacity: 0, duration: 0.55 })
-    .from('[data-hero="title"]', { y: 38, opacity: 0, duration: 0.72 }, '-=0.28')
-    .from('[data-hero="subtitle"]', { y: 24, opacity: 0, duration: 0.6 }, '-=0.34')
-    .from('[data-hero="cta"]', { y: 18, opacity: 0, duration: 0.52 }, '-=0.28')
-    .from('[data-hero="visual"]', { scale: 0.94, opacity: 0, duration: 0.86 }, '-=0.5')
-    .from('[data-hero="scroll"]', { opacity: 0, y: 10, duration: 0.45 }, '-=0.24');
+    .fromTo('[data-hero="eyebrow"]', { y: 22, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.55 })
+    .fromTo('[data-hero="title"]', { y: 38, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.72 }, '-=0.28')
+    .fromTo('[data-hero="subtitle"]', { y: 24, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.6 }, '-=0.34')
+    .fromTo('[data-hero="cta"]', { y: 18, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.52 }, '-=0.28')
+    .fromTo('[data-hero="visual"]', { scale: 0.94, autoAlpha: 0 }, { scale: 1, autoAlpha: 1, duration: 0.86 }, '-=0.5')
+    .fromTo('[data-hero="scroll"]', { y: 10, autoAlpha: 0 }, { y: 0, autoAlpha: 1, duration: 0.45 }, '-=0.24');
 
   gsap.to('.scroll-dot', {
     y: 16,
@@ -70,39 +75,54 @@
 
   const revealItems = gsap.utils.toArray('[data-reveal]');
   revealItems.forEach((item) => {
-    const type = item.dataset.reveal;
-    const animation = { opacity: 0, duration: 0.88, ease: 'power3.out' };
-    if (type === 'left') animation.x = -58;
-    if (type === 'right') animation.x = 58;
-    if (type === 'up') animation.y = 48;
-    if (type === 'scale') animation.scale = 0.95;
+    if (item.hasAttribute('data-stagger-item')) return;
 
-    gsap.from(item, {
-      ...animation,
-      scrollTrigger: {
-        trigger: item,
-        start: 'top 86%',
-        once: true,
-      },
-    });
+    const type = item.dataset.reveal;
+    const fromVars = { autoAlpha: 0 };
+    if (type === 'left') fromVars.x = -58;
+    if (type === 'right') fromVars.x = 58;
+    if (type === 'up') fromVars.y = 48;
+    if (type === 'scale') fromVars.scale = 0.95;
+
+    gsap.fromTo(
+      item,
+      fromVars,
+      {
+        autoAlpha: 1,
+        x: 0,
+        y: 0,
+        scale: 1,
+        duration: 0.88,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: item,
+          start: 'top 86%',
+          once: true,
+        },
+      }
+    );
   });
 
   gsap.utils.toArray('[data-stagger-group]').forEach((group) => {
     const children = group.querySelectorAll('[data-stagger-item]');
     if (!children.length) return;
 
-    gsap.from(children, {
-      opacity: 0,
-      y: 24,
-      stagger: 0.12,
-      duration: 0.58,
-      ease: 'power3.out',
-      scrollTrigger: {
-        trigger: group,
-        start: 'top 84%',
-        once: true,
-      },
-    });
+    gsap.fromTo(
+      children,
+      { autoAlpha: 0, y: 24 },
+      {
+        autoAlpha: 1,
+        y: 0,
+        stagger: 0.12,
+        duration: 0.58,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: group,
+          start: 'top 84%',
+          once: true,
+        },
+      }
+    );
   });
 
   const interactiveTargets = document.querySelectorAll('.btn-premium, .card-premium, .social-icon');
