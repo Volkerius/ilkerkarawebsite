@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="robots" content="noindex,nofollow" />
+    <meta name="theme-color" content="#0F172A" />
+    <title>İlker Kara | Admin</title>
+    <link rel="icon" type="image/svg+xml" href="../assets/icons/favicon.svg" />
+    <script>document.documentElement.classList.add('js');</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700;800&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { primary: '#0F172A', accent: '#D4AF37', bgsoft: '#F8FAFC' },
+            fontFamily: { sans: ['Inter', 'sans-serif'], display: ['Playfair Display', 'serif'] },
+          },
+        },
+      };
+    </script>
+    <link rel="stylesheet" href="../css/style.css" />
+  </head>
+  <body class="bg-bgsoft">
+    <main class="pt-16 pb-20" data-admin-app>
+      <section class="site-container mb-10">
+        <p class="text-sm uppercase tracking-[0.22em] text-slate-500 mb-4">Yönetim</p>
+        <h1 class="hero-title">Haber Paneli</h1>
+        <p class="hero-subtitle mt-6 max-w-2xl">Sadece yetkili kullanıcı giriş yaparak haber ekleyebilir.</p>
+      </section>
+
+      <section class="site-container mb-8" data-admin-login-wrap>
+        <div class="section-shell p-6 md:p-8 max-w-2xl">
+          <h2 class="text-2xl mb-5">Giriş Yap</h2>
+          <form data-admin-login class="space-y-4">
+            <div>
+              <label class="block text-sm font-medium mb-2" for="admin-email">E-posta</label>
+              <input id="admin-email" name="email" type="email" class="input-field" placeholder="ornek@mail.com" required />
+            </div>
+            <div>
+              <label class="block text-sm font-medium mb-2" for="admin-password">Şifre</label>
+              <input id="admin-password" name="password" type="password" class="input-field" placeholder="Şifreniz" required />
+            </div>
+            <button type="submit" class="btn-premium btn-primary">Panele Gir</button>
+          </form>
+          <p class="text-sm text-slate-600 mt-4" data-admin-auth-message></p>
+        </div>
+      </section>
+
+      <section class="site-container hidden" data-admin-editor>
+        <div class="section-shell p-6 md:p-8 mb-8">
+          <div class="flex items-center justify-between gap-3 mb-5 flex-wrap">
+            <h2 class="text-2xl md:text-3xl">Yeni Haber Ekle</h2>
+            <button type="button" class="btn-premium btn-outline" data-admin-logout>Çıkış Yap</button>
+          </div>
+
+          <form data-admin-news-form class="grid md:grid-cols-2 gap-4">
+            <div class="md:col-span-2">
+              <label for="admin-news-title" class="block text-sm font-medium mb-2">Başlık</label>
+              <input id="admin-news-title" name="title" class="input-field" type="text" required maxlength="110" />
+            </div>
+            <div class="md:col-span-2">
+              <label for="admin-news-description" class="block text-sm font-medium mb-2">Açıklama</label>
+              <textarea id="admin-news-description" name="description" class="input-field min-h-[140px]" required maxlength="1500"></textarea>
+            </div>
+            <div>
+              <label for="admin-news-image" class="block text-sm font-medium mb-2">Görsel</label>
+              <input id="admin-news-image" name="image" class="input-field" type="file" accept="image/*" />
+            </div>
+            <div class="flex items-end">
+              <button type="submit" class="btn-premium btn-primary w-full md:w-auto">Yayınla</button>
+            </div>
+          </form>
+          <p class="text-sm text-slate-600 mt-4" data-admin-news-message></p>
+        </div>
+
+        <div class="section-shell p-6 md:p-8">
+          <h3 class="text-2xl mb-5">Mevcut Haberler</h3>
+          <div class="news-empty section-shell p-6 text-center hidden" data-admin-empty>Henüz haber yok.</div>
+          <div class="grid md:grid-cols-2 gap-6" data-admin-list></div>
+        </div>
+      </section>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="../js/supabase-config.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" defer></script>
+    <script src="../js/script.js" defer></script>
+  </body>
+</html>

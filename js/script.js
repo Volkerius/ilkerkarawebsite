@@ -43,6 +43,7 @@
   const hasGsap = window.gsap && window.ScrollTrigger;
   if (!hasGsap) {
     showAnimationTargets();
+    initDynamicNews();
     return;
   }
 
@@ -191,6 +192,262 @@
         submitButton.textContent = originalText || 'Mesajı Gönder';
         submitButton.disabled = false;
       }, 2000);
+    });
+  }
+
+  initDynamicNews();
+
+  function initDynamicNews() {
+    const publicRoot = document.querySelector('[data-news-public-app]');
+    const adminRoot = document.querySelector('[data-admin-app]');
+    if (!publicRoot && !adminRoot) return;
+
+    const supabaseClient = createSupabaseClient();
+    if (!supabaseClient) {
+      if (publicRoot) {
+        const loading = publicRoot.querySelector('[data-news-loading]');
+        if (loading) loading.textContent = 'Haber sistemi henüz yapılandırılmadı.';
+      }
+      if (adminRoot) {
+        const msg = adminRoot.querySelector('[data-admin-auth-message]');
+        if (msg) msg.textContent = 'Admin paneli yapılandırması eksik (supabase-config.js).';
+      }
+      return;
+    }
+
+    if (publicRoot) initPublicNews(publicRoot, supabaseClient);
+    if (adminRoot) initAdminPanel(adminRoot, supabaseClient);
+  }
+
+  function createSupabaseClient() {
+    if (!window.supabase || !window.SUPABASE_CONFIG) return null;
+    const { url, anonKey } = window.SUPABASE_CONFIG;
+    if (!url || !anonKey || String(url).includes('BURAYA') || String(anonKey).includes('BURAYA')) return null;
+    return window.supabase.createClient(url, anonKey);
+  }
+
+  function escapeHtml(value) {
+    return String(value)
+      .replaceAll('&', '&amp;')
+      .replaceAll('<', '&lt;')
+      .replaceAll('>', '&gt;')
+      .replaceAll('"', '&quot;')
+      .replaceAll("'", '&#39;');
+  }
+
+  function renderNewsCard(item, withDeleteButton) {
+    const imageMarkup = item.image_url
+      ? `<img class="news-cover" src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy" />`
+      : '';
+
+    const deleteMarkup = withDeleteButton
+      ? `<button type="button" class="news-delete" data-admin-delete="${item.id}" aria-label="Haberi sil">Sil</button>`
+      : '';
+
+    const dateValue = item.published_at || item.created_at;
+    const dateText = dateValue ? new Date(dateValue).toLocaleDateString('tr-TR') : '-';
+
+    return `
+      <article class="card-premium news-card p-4 md:p-5">
+        ${imageMarkup}
+        <div class="space-y-3">
+          <div class="flex items-center justify-between gap-3">
+            <h3 class="text-2xl leading-tight">${escapeHtml(item.title || '')}</h3>
+            ${deleteMarkup}
+          </div>
+          <p class="text-slate-600 whitespace-pre-line">${escapeHtml(item.description || '')}</p>
+          <p class="text-xs uppercase tracking-[0.16em] text-slate-400">${dateText}</p>
+        </div>
+      </article>
+    `;
+  }
+
+  async function initPublicNews(root, client) {
+    const listEl = root.querySelector('[data-news-list]');
+    const countEl = root.querySelector('[data-news-count]');
+    const emptyEl = root.querySelector('[data-news-empty]');
+    const loadingEl = root.querySelector('[data-news-loading]');
+    if (!listEl || !countEl || !emptyEl || !loadingEl) return;
+
+    const table = window.SUPABASE_CONFIG.newsTable || 'news_items';
+
+    const { data, error } = await client
+      .from(table)
+      .select('id,title,description,image_url,published_at,created_at,is_published')
+      .eq('is_published', true)
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .order('created_at', { ascending: false });
+
+    loadingEl.classList.add('hidden');
+
+    if (error) {
+      emptyEl.classList.remove('hidden');
+      emptyEl.textContent = 'Haberler yüklenirken bir sorun oluştu.';
+      return;
+    }
+
+    const items = Array.isArray(data) ? data : [];
+    countEl.textContent = String(items.length);
+
+    if (!items.length) {
+      emptyEl.classList.remove('hidden');
+      return;
+    }
+
+    emptyEl.classList.add('hidden');
+    listEl.innerHTML = items.map((item) => renderNewsCard(item, false)).join('');
+  }
+
+  function setText(el, text) {
+    if (el) el.textContent = text;
+  }
+
+  async function initAdminPanel(root, client) {
+    const table = window.SUPABASE_CONFIG.newsTable || 'news_items';
+    const bucket = window.SUPABASE_CONFIG.newsBucket || 'news-images';
+
+    const loginWrap = root.querySelector('[data-admin-login-wrap]');
+    const loginForm = root.querySelector('[data-admin-login]');
+    const authMessage = root.querySelector('[data-admin-auth-message]');
+    const editor = root.querySelector('[data-admin-editor]');
+    const logoutBtn = root.querySelector('[data-admin-logout]');
+    const newsForm = root.querySelector('[data-admin-news-form]');
+    const newsMessage = root.querySelector('[data-admin-news-message]');
+    const listEl = root.querySelector('[data-admin-list]');
+    const emptyEl = root.querySelector('[data-admin-empty]');
+
+    if (!loginWrap || !loginForm || !editor || !newsForm || !listEl || !emptyEl) return;
+
+    const refreshAdminList = async () => {
+      const { data, error } = await client
+        .from(table)
+        .select('id,title,description,image_url,published_at,created_at,is_published')
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        setText(newsMessage, 'Haber listesi alınamadı.');
+        return;
+      }
+
+      const items = Array.isArray(data) ? data : [];
+      if (!items.length) {
+        listEl.innerHTML = '';
+        emptyEl.classList.remove('hidden');
+        return;
+      }
+
+      emptyEl.classList.add('hidden');
+      listEl.innerHTML = items.map((item) => renderNewsCard(item, true)).join('');
+    };
+
+    const applySessionUI = async () => {
+      const { data } = await client.auth.getSession();
+      const hasSession = Boolean(data && data.session);
+
+      if (hasSession) {
+        loginWrap.classList.add('hidden');
+        editor.classList.remove('hidden');
+        setText(authMessage, '');
+        await refreshAdminList();
+      } else {
+        loginWrap.classList.remove('hidden');
+        editor.classList.add('hidden');
+      }
+    };
+
+    await applySessionUI();
+
+    loginForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      const email = loginForm.email.value.trim();
+      const password = loginForm.password.value;
+      if (!email || !password) return;
+
+      const { error } = await client.auth.signInWithPassword({ email, password });
+      if (error) {
+        setText(authMessage, 'Giriş başarısız. E-posta/şifreyi kontrol edin.');
+        return;
+      }
+
+      setText(authMessage, 'Giriş başarılı.');
+      loginForm.reset();
+      await applySessionUI();
+    });
+
+    if (logoutBtn) {
+      logoutBtn.addEventListener('click', async () => {
+        await client.auth.signOut();
+        await applySessionUI();
+      });
+    }
+
+    newsForm.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setText(newsMessage, 'Kaydediliyor...');
+
+      const title = newsForm.title.value.trim();
+      const description = newsForm.description.value.trim();
+      const imageFile = newsForm.image.files && newsForm.image.files[0] ? newsForm.image.files[0] : null;
+
+      if (!title || !description) {
+        setText(newsMessage, 'Başlık ve açıklama zorunlu.');
+        return;
+      }
+
+      let imageUrl = '';
+      if (imageFile) {
+        if (imageFile.size > 3 * 1024 * 1024) {
+          setText(newsMessage, 'Görsel en fazla 3MB olabilir.');
+          return;
+        }
+
+        const safeName = `${Date.now()}-${imageFile.name.replace(/[^a-zA-Z0-9._-]/g, '-')}`;
+        const { error: uploadError } = await client.storage.from(bucket).upload(safeName, imageFile, { upsert: false });
+
+        if (uploadError) {
+          setText(newsMessage, 'Görsel yüklenemedi. Bucket izinlerini kontrol et.');
+          return;
+        }
+
+        const { data: publicData } = client.storage.from(bucket).getPublicUrl(safeName);
+        imageUrl = publicData && publicData.publicUrl ? publicData.publicUrl : '';
+      }
+
+      const { error } = await client.from(table).insert({
+        title,
+        description,
+        image_url: imageUrl,
+        is_published: true,
+        published_at: new Date().toISOString(),
+      });
+
+      if (error) {
+        setText(newsMessage, 'Haber kaydedilemedi. Tablo izinlerini kontrol et.');
+        return;
+      }
+
+      newsForm.reset();
+      setText(newsMessage, 'Haber yayınlandı.');
+      await refreshAdminList();
+    });
+
+    listEl.addEventListener('click', async (event) => {
+      const button = event.target.closest('[data-admin-delete]');
+      if (!button) return;
+      const id = button.getAttribute('data-admin-delete');
+      if (!id) return;
+
+      const confirmDelete = window.confirm('Bu haberi silmek istediğine emin misin?');
+      if (!confirmDelete) return;
+
+      const { error } = await client.from(table).delete().eq('id', id);
+      if (error) {
+        setText(newsMessage, 'Silme işlemi başarısız oldu.');
+        return;
+      }
+
+      setText(newsMessage, 'Haber silindi.');
+      await refreshAdminList();
     });
   }
 })();
