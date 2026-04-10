@@ -237,7 +237,7 @@
 
   function renderNewsCard(item, withDeleteButton) {
     const imageMarkup = item.image_url
-      ? `<img class="news-cover" src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy" />`
+      ? `<div class="news-media"><img class="news-cover" src="${escapeHtml(item.image_url)}" alt="${escapeHtml(item.title)}" loading="lazy" /></div>`
       : '';
 
     const deleteMarkup = withDeleteButton
